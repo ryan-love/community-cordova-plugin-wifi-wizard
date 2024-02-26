@@ -2105,7 +2105,7 @@ public class WifiWizard2 extends CordovaPlugin {
 
             WifiNetworkSuggestion.Builder builder = new WifiNetworkSuggestion.Builder();
             builder.setSsid(SSID);
-            builder.setIsAppInteractionRequired(false);
+            builder.setIsAppInteractionRequired(true);
 
             if (Algorithm.matches("/WEP|WPA|WPA2/gim") && PASS.length() > 0) {
                 builder.setWpa2Passphrase(PASS);
