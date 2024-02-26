@@ -2131,6 +2131,21 @@ public class WifiWizard2 extends CordovaPlugin {
                 callbackContext.error("STATUS_NETWORK_SUGGESTIONS_ERROR");
                 return;
             }
+                      // Optional (Wait for post connection broadcast to one of your suggestions)
+          final IntentFilter intentFilter =
+            new IntentFilter(WifiManager.ACTION_WIFI_NETWORK_SUGGESTION_POST_CONNECTION);
+
+          final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+              if (!intent.getAction().equals(
+                WifiManager.ACTION_WIFI_NETWORK_SUGGESTION_POST_CONNECTION)) {
+                return;
+              }
+              // do post connect processing here...
+            }
+          };
+          context.registerReceiver(broadcastReceiver, intentFilter);
             callbackContext.success(data);
             
             //TODO: check when device is connected
