@@ -2033,8 +2033,7 @@ public class WifiWizard2 extends CordovaPlugin {
 
         NetworkRequest.Builder networkRequestBuilder1 = new NetworkRequest.Builder();
 
-        networkRequestBuilder1.addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-                .removeCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+        networkRequestBuilder1.addTransportType(NetworkCapabilities.TRANSPORT_WIFI);
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -2050,9 +2049,12 @@ public class WifiWizard2 extends CordovaPlugin {
                   public void onAvailable(Network network) {
                     super.onAvailable(network);
                     Log.d(TAG, "WifiWizard2: 211 onAvailable:" + network);
-                    callbackContext.success();
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                      cm.bindProcessToNetwork(network);
+                      if(cm.bindProcessToNetwork(network)){
+                        callbackContext.success();
+                      }else{
+                        callbackContext.error("CANNONT_BIND_PROCESS_TO_NETWORK");
+                      }
                     }
                   }
 
@@ -2061,6 +2063,16 @@ public class WifiWizard2 extends CordovaPlugin {
                     super.onUnavailable();
                     Log.d(TAG, "WifiWizard2: 211 onUnavailable");
                     callbackContext.error("SPECIFIER_NETWORK_UNAVAILABLE");
+                  }
+
+                  @Override
+                  public void onLost(Network network) {
+                      super.onLost(network);
+                  }
+
+                  @Override
+                  public void onCapabilitiesChanged(Network network, NetworkCapabilities networkCapabilities) {
+                      super.onCapabilitiesChanged(network, networkCapabilities);
                   }
                 };
         cm.requestNetwork(networkRequest, networkCallback);
